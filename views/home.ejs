@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            min-height: 100vh;
+            padding: 40px;
+            color: white;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 2.5rem;
+            color: #38bdf8;
+        }
+
+        form {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        input {
+            padding: 14px 16px;
+            width: 70%;
+            max-width: 500px;
+            border: none;
+            border-radius: 10px;
+            outline: none;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 10px;
+            background: #38bdf8;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        button:hover {
+            background: #0ea5e9;
+            transform: translateY(-2px);
+        }
+
+        .generated-link {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid #38bdf8;
+            border-radius: 12px;
+            color: #7dd3fc;
+            word-break: break-all;
+        }
+
+        .generated-link a {
+            color: #38bdf8;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            overflow: hidden;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        thead {
+            background: #38bdf8;
+            color: white;
+        }
+
+        th,
+        td {
+            padding: 14px;
+            text-align: center;
+        }
+
+        tbody tr {
+            background: rgba(255, 255, 255, 0.06);
+            transition: 0.3s ease;
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        td a {
+            color: #7dd3fc;
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            input {
+                width: 100%;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🔗 URL Shortener</h1>
+
+        <form method="post" action="/url">
+            <input type="text" name="url" placeholder="Enter your URL (https://www.google.com)" required>
+            <button type="submit">Generate</button>
+        </form>
+
+        <% if (locals?.id) { %>
+            <div class="generated-link">
+                Your Generated Link:
+                <a href="/url/<%= id %>" target="_blank">
+                    http://localhost:8001/url/<%= id %>
+                </a>
+            </div>
+        <% } %>
+
+        <% if (locals?.url) { %>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sr No</th>
+                        <th>Short ID</th>
+                        <th>Redirect URL</th>
+                        <th>Analytics</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% url.forEach((element, index) => { %>
+                        <tr>
+                            <td><%= index + 1 %></td>
+                            <td>
+                                <a href="/url/<%= element.ShortId %>" target="_blank">
+                                    <%= element.ShortId %>
+                                </a>
+                            </td>
+                            <td>
+                                <a href="<%= element.redirectUrl %>" target="_blank">
+                                    <%= element.redirectUrl %>
+                                </a>
+                            </td>
+                            <td><%= element.visitHistory.length %></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        <% } %>
+    </div>
+</body>
+
+</html>
+
+
+<!-- Claude Design -->
+
+ 
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+            background: #f5f5f5;
+        }
+
+        h1 { color: #333; }
+
+        form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover { background: #4338ca; }
+
+        .link-box {
+            background: #e8f5e9;
+            border: 1px solid #a5d6a7;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        th {
+            background: #4f46e5;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #f9f9f9; }
+    </style>
+</head>
+
+<body>
+
+    <h1>URL Shortener</h1>
+
+    <form method="post" action="/url">
+        <input type="text" name="url" placeholder="https://example.com">
+        <button type="submit">Shorten</button>
+    </form>
+
+    <% if (locals?.id) { %>
+    <div class="link-box">
+        <strong>Your short link:</strong>
+        <a target="_blank" href="http://localhost:8001/url/<%= id %>" >http://localhost:8001/url/<%= id %></a>
+    </div>
+    <% } %>
+
+    <% if (locals?.url) { %>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Short ID</th>
+                <th>Redirect URL</th>
+                <th>Visits</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% url.forEach((element, index) => { %>
+            <tr>
+                <td><%= index + 1 %></td>
+                <td><%= element?.ShortId %></td>
+                <td><%= element?.redirectUrl %></td>
+                <td><%= element?.visitHistory.length %></td>
+            </tr>
+            <% }) %>
+        </tbody>
+    </table>
+    <% } %>
+
+</body>
+</html> -->
