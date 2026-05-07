@@ -1,6 +1,7 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
-const PORT = 8001
+const PORT = process.env.PORT ?? 8001
 const path = require('path')
 const ejs = require('ejs')
 // Conection
@@ -8,7 +9,7 @@ const { handleMongoDbConnection } = require('./connection')
 const router = require('./routes/urlShortner')
 const staticRouter = require('./routes/StaticRouter')
 
-handleMongoDbConnection(`mongodb://127.0.0.1:27017/url-shortner`)
+handleMongoDbConnection(`${process.env.MONGO_URL}`)
 .then(() => console.log(`Mongo DB connected SuccessFully`))
 .catch((err) => { console.log(`Error : ${err}`) })
 
