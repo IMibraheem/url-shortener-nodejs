@@ -10,7 +10,8 @@ const handleGenerateUrl = async (req, res) => {
         const response = await URL.create({
             ShortId: id,
             redirectUrl: body.url,
-            visitHistory: []
+            visitHistory: [],
+            createdBy: req.user._id
         })
 return res.render('home' , {
     id :id
@@ -24,7 +25,6 @@ return res.render('home' , {
 const handleRedirect = async (req , res) => {
     try {
         const ShortId = req.params.id
-        console.log(ShortId , 'ShortId')
         const response = await URL.findOneAndUpdate({
         ShortId
         }, {
@@ -34,8 +34,7 @@ const handleRedirect = async (req , res) => {
                 }
             }
         }) 
-        console.log(response , 'response')
-
+        
       return  res.redirect(response?.redirectUrl)
     } catch (error) {
       return  res.status(500).json({message : `Internel Server Error`})
@@ -49,7 +48,6 @@ const handleGetAnalatics = async (req, res) =>{
         const response = await  URL.findOne({
             ShortId :id
         })
-        console.log(response , 'visitHistory')
       return  res.status(200).json({totalAnalatics : response?.visitHistory?.length})
     } catch (error) {
       return  res.status(500).json({message : `Internel Server Error`}) 
@@ -58,7 +56,10 @@ const handleGetAnalatics = async (req, res) =>{
 
 const handleServerSideRendering = async (req , res)=>{
     try {
-        const response = await URL.find({})
+        if(!req.user) return req.redirect('/login')
+            console.log(req.user._id, 'idd')
+        const response = await URL.find({createdBy: req.user._id})
+        console.log(response , 'res')
       return  res.render('home' , {
             url : response
         })
